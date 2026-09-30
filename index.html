@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Very Important Potato</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #fff3ca; color: #493018; font-family: system-ui, sans-serif; text-align: center; }
+    main { padding: 32px; }
+    .potato { font-size: 110px; }
+    h1 { font-size: clamp(28px, 6vw, 48px); }
+    button { border: 0; border-radius: 12px; padding: 16px 24px; background: #493018; color: white; font: inherit; cursor: pointer; }
+    button:hover { background: #70502b; }
+    button:focus-visible { outline: 4px solid #b97417; outline-offset: 4px; }
+    #status { min-height: 3em; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="potato" aria-hidden="true">🥔</div>
+    <h1>Very Important Potato</h1>
+    <p>This potato has absolutely no responsibilities.</p>
+    <button id="button" type="button">Give potato a promotion</button>
+    <p id="status" role="status">Current role: Potato Intern</p>
+  </main>
+  <script>
+    const roles = ['Assistant Potato', 'Senior Potato', 'Director of Doing Nothing', 'Chief Couch Potato', 'Supreme Potato of the Universe'];
+    let promotions = 0;
+    document.getElementById('button').addEventListener('click', () => {
+      document.getElementById('status').textContent = 'Current role: ' + roles[promotions % roles.length];
+      promotions += 1;
+    });
+  </script>
+</body>
+</html>
