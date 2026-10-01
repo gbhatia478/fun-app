@@ -2,17 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Very Important Potato</title>
   <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #fff3ca; color: #493018; font-family: system-ui, sans-serif; text-align: center; }
-    main { padding: 32px; }
-    .potato { font-size: 110px; }
-    h1 { font-size: clamp(28px, 6vw, 48px); }
-    button { border: 0; border-radius: 12px; padding: 16px 24px; background: #493018; color: white; font: inherit; cursor: pointer; }
-    button:hover { background: #70502b; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+      background: #fff3ca;
+      color: #493018;
+      font: 17px/1.5 system-ui, sans-serif;
+      text-align: center;
+    }
+    main { width: 100%; max-width: 480px; padding: 12px 0; }
+    .potato { font-size: clamp(80px, 24vw, 110px); line-height: 1.2; }
+    h1 { font-size: clamp(28px, 6vw, 48px); line-height: 1.15; margin: 24px 0 16px; }
+    p { margin: 16px 0; overflow-wrap: break-word; }
+    button { width: 100%; min-height: 48px; border: 0; border-radius: 12px; padding: 16px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; }
+    @media (hover: hover) { button:hover { background: #70502b; } }
+    button:active { background: #70502b; }
     button:focus-visible { outline: 4px solid #b97417; outline-offset: 4px; }
-    #status { min-height: 3em; margin-top: 24px; }
+    #status { min-height: 3em; margin: 24px 0 0; }
   </style>
 </head>
 <body>
