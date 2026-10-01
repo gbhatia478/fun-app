@@ -20,9 +20,17 @@
       text-align: center;
     }
     main { width: 100%; max-width: 480px; padding: 12px 0; }
-    .potato { position: relative; width: 240px; height: 290px; margin: 0 auto; }
+    .potato { position: relative; width: 240px; height: 290px; margin: 60px auto 0; }
     .potato svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .character-head { position: absolute; top: -18px; left: 67px; width: 106px; height: 120px; object-fit: contain; transform-origin: 50% 85%; animation: head-bob 1.2s steps(2, end) infinite; }
+    .character-head img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .character-head .head-accessories { position: absolute; inset: 0; }
+    .accessory { display: none; }
+    .potato[data-level="1"] .tie, .potato[data-level="2"] .tie, .potato[data-level="3"] .tie, .potato[data-level="4"] .tie, .potato[data-level="5"] .tie,
+    .potato[data-level="2"] .sunglasses, .potato[data-level="3"] .sunglasses, .potato[data-level="4"] .sunglasses, .potato[data-level="5"] .sunglasses,
+    .potato[data-level="3"] .hat, .potato[data-level="4"] .hat, .potato[data-level="5"] .hat,
+    .potato[data-level="4"] .crown, .potato[data-level="5"] .crown,
+    .potato[data-level="5"] .cape { display: inline; }
     .cutout-body { transform-origin: 120px 270px; animation: body-rock 1.2s steps(2, end) infinite; }
     .left-arm { transform-origin: 84px 112px; animation: arm-swing 1.2s steps(2, end) infinite; }
     .right-arm { transform-origin: 156px 112px; animation: arm-swing 1.2s steps(2, end) infinite reverse; }
@@ -41,10 +49,11 @@
 </head>
 <body>
   <main>
-    <div class="potato" aria-hidden="true">
+    <div class="potato" data-level="0" aria-hidden="true">
       <svg viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="120" cy="281" rx="69" ry="6" fill="#493018" opacity=".12" />
         <g class="cutout-body" stroke="#3a3434" stroke-width="1.5" stroke-linejoin="round">
+          <path class="accessory cape" d="M87 99 Q120 85 153 99 L182 251 Q120 230 58 251 Z" fill="#a73563" stroke="#762244" />
           <path d="M87 204 L111 204 L111 272 L87 272 Z M129 204 L153 204 L153 272 L129 272 Z" fill="#45414b" />
           <path d="M75 271 H112 V280 H66 V274 Z M128 271 H153 L174 274 V280 H128 Z" fill="#211e24" />
           <g class="left-arm">
@@ -63,9 +72,32 @@
             <path d="M120 116 H129 V119 H120 Z M137 121 H149 V124 H137 Z M120 126 H136 V129 H120 Z" fill="#e3c431" />
             <path d="M130 116 H137 V119 H130 Z M120 121 H129 V124 H120 Z M139 126 H149 V129 H139 Z" fill="#c54537" />
           </g>
+          <g class="accessory tie" fill="#db493c" stroke="#7f2824">
+            <path d="M111 103 H129 L124 113 H116 Z M116 113 H124 L132 159 L120 172 L108 159 Z" />
+            <path d="M114 130 L127 143 M112 143 L129 158" fill="none" stroke="#ffd77a" stroke-width="4" />
+          </g>
         </g>
       </svg>
-      <img class="character-head" src="assets/samit-head.png" alt="" width="106" height="120">
+      <div class="character-head">
+        <img src="assets/samit-head.png" alt="" width="106" height="120">
+        <svg class="head-accessories" viewBox="0 0 106 120" xmlns="http://www.w3.org/2000/svg">
+          <g class="accessory sunglasses" stroke="#211e24" stroke-width="3" stroke-linejoin="round">
+            <path d="M23 59 H49 L46 74 Q33 80 26 71 Z M59 59 H85 L82 71 Q72 80 62 74 Z" fill="#211e24" />
+            <path d="M48 62 Q54 58 60 62 M17 59 H24 M85 59 H91" fill="none" />
+            <path d="M29 63 L36 63 M65 63 L72 63" stroke="#8ccee2" stroke-width="2" />
+          </g>
+          <g class="accessory hat" fill="#49305f" stroke="#211e24" stroke-width="2" stroke-linejoin="round">
+            <path d="M23 3 L17 -30 H89 L83 3 Z" />
+            <path d="M22 -8 H84 L83 2 H23 Z" fill="#ed739d" />
+            <ellipse cx="53" cy="4" rx="52" ry="7" />
+          </g>
+          <g class="accessory crown" fill="#f6c443" stroke="#8c5914" stroke-width="2" stroke-linejoin="round">
+            <path d="M28 -30 L23 -49 L40 -40 L53 -54 L66 -40 L83 -49 L78 -30 Z" />
+            <path d="M29 -30 H77 V-25 H29 Z" />
+            <path d="M53 -41 L57 -36 L53 -31 L49 -36 Z" fill="#db493c" />
+          </g>
+        </svg>
+      </div>
     </div>
     <h1>Very Important Potato</h1>
     <p>This potato has absolutely no responsibilities.</p>
@@ -74,9 +106,12 @@
   </main>
   <script>
     const roles = ['Assistant Potato', 'Senior Potato', 'Director of Doing Nothing', 'Chief Couch Potato', 'Supreme Potato of the Universe'];
+    const outfits = ['A tie. Very professional.', 'Sunglasses. Too cool to work.', 'An enormous hat. Bigger than the job.', 'A crown on the hat. Naturally.', 'A royal cape. The outfit is complete.'];
     let promotions = 0;
     document.getElementById('button').addEventListener('click', () => {
-      document.getElementById('status').textContent = 'Current role: ' + roles[promotions % roles.length];
+      const level = promotions % roles.length;
+      document.querySelector('.potato').dataset.level = level + 1;
+      document.getElementById('status').textContent = 'Current role: ' + roles[level] + '. ' + outfits[level];
       promotions += 1;
     });
   </script>
