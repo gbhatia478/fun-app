@@ -20,7 +20,16 @@
       text-align: center;
     }
     main { width: 100%; max-width: 480px; padding: 12px 0; }
-    .potato { font-size: clamp(80px, 24vw, 110px); line-height: 1.2; }
+    .potato { position: relative; width: 240px; height: 290px; margin: 0 auto; }
+    .potato svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .potato-head { position: absolute; top: 0; left: 67px; width: 106px; font-size: 92px; line-height: 1.1; transform-origin: 50% 85%; animation: head-bob 1.2s steps(2, end) infinite; }
+    .cutout-body { transform-origin: 120px 270px; animation: body-rock 1.2s steps(2, end) infinite; }
+    .left-arm { transform-origin: 84px 112px; animation: arm-swing 1.2s steps(2, end) infinite; }
+    .right-arm { transform-origin: 156px 112px; animation: arm-swing 1.2s steps(2, end) infinite reverse; }
+    @keyframes head-bob { 0%, 100% { transform: translateY(0) rotate(-7deg); } 50% { transform: translateY(4px) rotate(7deg); } }
+    @keyframes body-rock { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+    @keyframes arm-swing { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(18deg); } }
+    @media (prefers-reduced-motion: reduce) { .potato-head, .cutout-body, .left-arm, .right-arm { animation: none; } }
     h1 { font-size: clamp(28px, 6vw, 48px); line-height: 1.15; margin: 24px 0 16px; }
     p { margin: 16px 0; overflow-wrap: break-word; }
     button { width: 100%; min-height: 48px; border: 0; border-radius: 12px; padding: 16px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; }
@@ -32,7 +41,32 @@
 </head>
 <body>
   <main>
-    <div class="potato" aria-hidden="true">🥔</div>
+    <div class="potato" aria-hidden="true">
+      <svg viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="120" cy="281" rx="69" ry="6" fill="#493018" opacity=".12" />
+        <g class="cutout-body" stroke="#3a3434" stroke-width="1.5" stroke-linejoin="round">
+          <path d="M87 204 L111 204 L111 272 L87 272 Z M129 204 L153 204 L153 272 L129 272 Z" fill="#45414b" />
+          <path d="M75 271 H112 V280 H66 V274 Z M128 271 H153 L174 274 V280 H128 Z" fill="#211e24" />
+          <g class="left-arm">
+            <path d="M84 101 L84 118 L24 126 L21 109 Z" fill="#a69587" />
+            <path d="M21 107 L29 124 L18 130 L9 113 Z" fill="#d7ab64" />
+          </g>
+          <g class="right-arm">
+            <path d="M156 101 L219 109 L216 126 L156 118 Z" fill="#a69587" />
+            <path d="M219 107 L231 113 L222 130 L211 124 Z" fill="#d7ab64" />
+          </g>
+          <path d="M84 99 L156 99 L158 210 L82 207 Z" fill="#a69587" />
+          <path d="M84 94 L100 94 L100 100 L84 100 Z M140 94 L156 94 L156 100 L140 100 Z" fill="#45414b" />
+          <path d="M87 97 H97 M143 97 H153" stroke="#e5c743" stroke-width="3" />
+          <g stroke="none">
+            <path d="M120 115 H149 V130 H120 Z" fill="#263953" />
+            <path d="M120 116 H129 V119 H120 Z M137 121 H149 V124 H137 Z M120 126 H136 V129 H120 Z" fill="#e3c431" />
+            <path d="M130 116 H137 V119 H130 Z M120 121 H129 V124 H120 Z M139 126 H149 V129 H139 Z" fill="#c54537" />
+          </g>
+        </g>
+      </svg>
+      <div class="potato-head">🥔</div>
+    </div>
     <h1>Very Important Potato</h1>
     <p>This potato has absolutely no responsibilities.</p>
     <button id="button" type="button">Give potato a promotion</button>
