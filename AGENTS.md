@@ -2,11 +2,21 @@
 
 ## Project context
 
-- This is the Very Important Potato app, a small, playful web app that the user will improve continuously through natural-language requests.
+- This is Samit Dodges Responsibility, a playful side-scrolling survival game that grew out of the Very Important Potato app. The user will improve it continuously through natural-language requests.
 - The app currently lives in `index.html`, with inline CSS and JavaScript and no build step.
 - GitHub repository: `https://github.com/gbhatia478/fun-app`.
 - Production URL: `https://gbhatia478.github.io/fun-app/`.
 - GitHub Pages deploys from `main`. Keep the app compatible with static hosting under the `/fun-app/` path; use relative asset paths.
+
+## Game purpose and difficulty
+
+- Samit automatically runs while responsibilities such as meetings, deadlines, and chores approach. Players time jumps to avoid them, survive, and compete on the shared leaderboard.
+- Make the game easy to learn and difficult to master. The humor and costume unlocks support the game; the core challenge is precise jump timing as obstacles become harder.
+- Scores currently increase by one point per second of active play. Keep displayed scores and existing leaderboard entries on a consistent scale when changing scoring.
+- Points 1–10 are a forgiving learning phase. Difficulty increases smoothly after 10, reaches about 75% of the ramp at 30, and reaches full difficulty at 50. These are the current design targets; follow later user adjustments.
+- Around 30 points, play should feel demanding and require near-perfect timing. At 50 and beyond, the intent is to require almost perfect play. High scores should reflect skill and consistency.
+- Increase challenge through obstacle speed, spacing, and height. Taller obstacles should require clearing them near the top of a jump. Keep visible obstacles and collision rules consistent.
+- Keep the challenge fair: preserve enough time to land and jump again, avoid impossible obstacle sequences, and check precise play at both 30 and 60 fps on representative iPhone sizes. Simulated survival proves playability, but human playtesting determines whether the difficulty feels right.
 
 ## Work as the user's vibe coding partner
 
