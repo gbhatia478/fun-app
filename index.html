@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Samit Fails Upward</title>
+  <title>Samit Dodges Responsibility</title>
   <style>
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
@@ -20,7 +20,17 @@
       text-align: center;
     }
     main { width: 100%; max-width: 480px; padding: 12px 0; }
-    .potato { position: relative; width: 240px; height: 290px; margin: 60px auto 0; }
+    .arena { position: relative; height: 320px; overflow: hidden; border: 2px solid #b97417; border-radius: 20px; background: #fff8e2; }
+    .arena::after { content: ''; position: absolute; left: 0; right: 0; bottom: 20px; border-top: 3px solid #b97417; }
+    .runner { position: absolute; left: 18px; bottom: 24px; width: 108px; height: 131px; }
+    .potato { position: absolute; bottom: -4px; width: 240px; height: 290px; transform: scale(.45); transform-origin: bottom left; }
+    .obstacle { position: absolute; left: 0; bottom: 24px; width: 64px; height: 38px; display: grid; place-items: center; border: 2px solid #7f2824; border-top-width: 8px; border-radius: 5px; background: #ffd7a3; color: #493018; font-size: 10px; font-weight: 800; }
+    .scoreboard { margin: 12px 0; font-weight: 750; font-size: 22px; font-variant-numeric: tabular-nums; }
+    @media (max-height: 500px) and (min-width: 600px) {
+      .arena { height: 272px; }
+      .runner { width: 84px; height: 102px; }
+      .potato { transform: scale(.35); }
+    }
     .potato svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .character-head { position: absolute; top: -18px; left: 67px; width: 106px; height: 120px; object-fit: contain; transform-origin: 50% 85%; animation: head-bob 1.2s steps(2, end) infinite; }
     .character-head img { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -51,6 +61,7 @@
     h1 { font-size: clamp(28px, 6vw, 48px); line-height: 1.15; margin: 24px 0 16px; }
     p { margin: 16px 0; overflow-wrap: break-word; }
     button { width: 100%; min-height: 48px; border: 0; border-radius: 12px; padding: 16px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; }
+    .arena + button { margin-top: 12px; }
     @media (hover: hover) { button:hover { background: #70502b; } }
     button:active { background: #70502b; }
     button:focus-visible { outline: 4px solid #b97417; outline-offset: 4px; }
@@ -59,6 +70,11 @@
 </head>
 <body>
   <main>
+    <h1>Samit dodges responsibility.</h1>
+    <p>Meetings. Deadlines. Chores. Help him jump over everything he should be doing.</p>
+    <p class="scoreboard">Score: <span id="score">0</span></p>
+    <div class="arena" role="img" aria-label="Samit jumps over approaching responsibilities. Use the jump button or Space to play.">
+    <div class="runner" aria-hidden="true">
     <div class="potato" data-level="0" aria-hidden="true">
       <svg class="fart-cloud" viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
         <g fill="#c5d979" stroke="#788c38" stroke-width="2">
@@ -119,29 +135,114 @@
         </svg>
       </div>
     </div>
-    <h1>Samit fails upward.</h1>
-    <p>Zero work. Unlimited confidence. Help our least qualified friend climb the ladder.</p>
-    <button id="button" type="button">Promote Samit anyway</button>
-    <p id="status" role="status">Current title: Group Chat Intern</p>
+    </div>
+    </div>
+    <button id="button" type="button" aria-describedby="status">Jump, Samit!</button>
+    <p id="status" role="status">Tap to start. Jump again after landing. Survive for 10 points a second. Space works too.</p>
   </main>
   <script>
     const roles = ['Assistant to Nobody', 'Senior Credit Taker', 'Director of Looking Busy', 'Chief Ego Officer', 'Supreme Leader of Doing Nothing'];
     const outfits = ['A tie. That’s his entire résumé.', 'Now he can ignore you in style.', 'Finally, a hat that fits his ego.', 'He’ll be unbearable in the group chat.', 'All that power. Still just hot air.'];
-    const buttonLabels = ['Inflate his ego', 'Give him a bigger head', 'Crown this nonsense', 'Give him unlimited power', 'Enable him again'];
-    let promotions = 0;
     const potato = document.querySelector('.potato');
+    const runner = document.querySelector('.runner');
+    const arena = document.querySelector('.arena');
+    const button = document.getElementById('button');
+    const status = document.getElementById('status');
+    const score = document.getElementById('score');
+    const responsibilities = ['MEETING', 'DEADLINE', 'CHORES'];
+    let running = false;
+    let obstacles = [];
+    let elapsed = 0;
+    let jumpHeight = 0;
+    let velocity = 0;
+    let spawnIn = 0;
+    let lastTime = null;
     let fartTimeout;
-    document.getElementById('button').addEventListener('click', () => {
-      const level = promotions % roles.length;
-      potato.dataset.level = level + 1;
+
+    function jump() {
+      if (!running) {
+        obstacles.forEach(obstacle => obstacle.element.remove());
+        obstacles = [];
+        elapsed = 0;
+        jumpHeight = 0;
+        velocity = 0;
+        spawnIn = 0;
+        lastTime = null;
+        score.textContent = '0';
+        potato.dataset.level = 0;
+        running = true;
+        button.textContent = 'Jump, Samit!';
+        status.textContent = 'Keep jumping. His only job is avoiding a job.';
+        requestAnimationFrame(frame);
+      }
+      if (jumpHeight > 0) return;
+      velocity = 620;
       potato.classList.remove('farting');
       void potato.offsetWidth;
       potato.classList.add('farting');
       clearTimeout(fartTimeout);
       fartTimeout = setTimeout(() => potato.classList.remove('farting'), 900);
-      document.getElementById('status').textContent = 'Current title: ' + roles[level] + '. ' + outfits[level];
-      document.getElementById('button').textContent = buttonLabels[level];
-      promotions += 1;
+    }
+
+    function frame(now) {
+      if (!running) return;
+      const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
+      lastTime = now;
+      elapsed += dt;
+      velocity -= 1600 * dt;
+      jumpHeight = Math.max(0, jumpHeight + velocity * dt);
+      if (jumpHeight === 0 && velocity < 0) velocity = 0;
+      runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
+
+      spawnIn -= dt;
+      if (spawnIn <= 0) {
+        const element = document.createElement('div');
+        element.className = 'obstacle';
+        element.setAttribute('aria-hidden', 'true');
+        element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
+        arena.appendChild(element);
+        obstacles.push({ element, x: arena.clientWidth + 10 });
+        spawnIn = 1.5 + Math.random() * .6;
+      }
+      const speed = Math.min(280, 180 + elapsed * 2);
+      const scale = runner.clientWidth / 240;
+      const hitLeft = runner.offsetLeft + 84 * scale;
+      const hitRight = runner.offsetLeft + 156 * scale;
+      for (const obstacle of obstacles) {
+        obstacle.x -= speed * dt;
+        obstacle.element.style.transform = 'translateX(' + obstacle.x + 'px)';
+        // Use the torso and feet, leaving the waving arms out of collisions.
+        if (obstacle.x < hitRight && obstacle.x + 64 > hitLeft && jumpHeight < 34) {
+          running = false;
+          status.textContent = 'Caught by ' + obstacle.element.textContent.toLowerCase() + '! ' + score.textContent + ' points. He finally has something to do.';
+          button.textContent = 'Help him escape again';
+          return;
+        }
+      }
+      obstacles = obstacles.filter(obstacle => {
+        if (obstacle.x + 64 >= 0) return true;
+        obstacle.element.remove();
+        return false;
+      });
+      const points = Math.floor(elapsed * 10);
+      score.textContent = points;
+      const level = Math.min(5, Math.floor(points / 50));
+      if (+potato.dataset.level !== level) {
+        potato.dataset.level = level;
+        status.textContent = roles[level - 1] + '. ' + outfits[level - 1];
+      }
+      requestAnimationFrame(frame);
+    }
+
+    button.addEventListener('click', jump);
+    document.addEventListener('keydown', event => {
+      if (event.code === 'Space' && event.target !== button) {
+        event.preventDefault();
+        if (!event.repeat) jump();
+      }
+    });
+    document.addEventListener('visibilitychange', () => {
+      lastTime = null;
     });
   </script>
 </body>
