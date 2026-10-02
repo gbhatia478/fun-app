@@ -242,7 +242,7 @@
         const row = document.createElement('li');
         row.textContent = entry.initials;
         const points = document.createElement('span');
-        points.textContent = entry.score + ' pts';
+        points.textContent = Math.floor(entry.score / 10) + ' pts';
         row.appendChild(points);
         highScores.appendChild(row);
       });
@@ -263,7 +263,8 @@
       try {
         const run = await runPromise;
         if (!run) throw new Error('Run could not be registered');
-        const result = await scoresRequest('/finish', { runId: run.runId, score: Number(score.textContent) });
+        // The leaderboard stores tenths of a point, including scores from earlier games.
+        const result = await scoresRequest('/finish', { runId: run.runId, score: Number(score.textContent) * 10 });
         showHighScores(result.scores);
         if (result.qualified) {
           qualifyingRun = run.runId;
@@ -341,9 +342,10 @@
       if (jumpHeight === 0 && velocity < 0) velocity = 0;
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
 
-      const points = Math.floor(elapsed * 10);
-      const difficulty = Math.min(1, points / 1000);
-      const speed = 140 + 160 * difficulty;
+      const points = Math.floor(elapsed);
+      const difficulty = Math.min(1, elapsed / 100);
+      const expertDifficulty = Math.min(1, Math.max(0, (elapsed - 120) / 380));
+      const speed = 140 + 160 * difficulty + 120 * expertDifficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
         const element = document.createElement('div');
@@ -352,8 +354,8 @@
         element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
         arena.appendChild(element);
         obstacles.push({ element, x: arena.clientWidth + 10 });
-        // Keep enough time between obstacles to land before the next jump.
-        spawnIn = 2.2 - .9 * difficulty + Math.random() * (.8 - .4 * difficulty);
+        // Tighten the recovery gap gradually, keeping time to land between jumps.
+        spawnIn = 2.2 - .9 * difficulty - .08 * expertDifficulty + Math.random() * (.8 - .4 * difficulty - .34 * expertDifficulty);
       }
       const scale = runner.clientWidth / 240;
       const hitLeft = runner.offsetLeft + 92 * scale;
@@ -377,7 +379,7 @@
         return false;
       });
       score.textContent = points;
-      const level = Math.min(5, Math.floor(points / 50));
+      const level = Math.min(5, Math.floor(points / 5));
       if (+potato.dataset.level !== level) {
         potato.dataset.level = level;
         status.textContent = roles[level - 1] + '. ' + outfits[level - 1];
