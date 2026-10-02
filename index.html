@@ -24,7 +24,7 @@
     .arena::after { content: ''; position: absolute; left: 0; right: 0; bottom: 20px; border-top: 3px solid #b97417; }
     .runner { position: absolute; left: 18px; bottom: 24px; width: 108px; height: 131px; }
     .potato { position: absolute; bottom: -4px; width: 240px; height: 290px; transform: scale(.45); transform-origin: bottom left; }
-    .obstacle { position: absolute; left: 0; bottom: 24px; width: 64px; height: 38px; display: grid; place-items: center; border: 2px solid #7f2824; border-top-width: 8px; border-radius: 5px; background: #ffd7a3; color: #493018; font-size: 10px; font-weight: 800; }
+    .obstacle { position: absolute; left: 0; bottom: 24px; width: 64px; height: 32px; display: grid; place-items: center; border: 2px solid #7f2824; border-top-width: 8px; border-radius: 5px; background: #ffd7a3; color: #493018; font-size: 10px; font-weight: 800; }
     .scoreboard { margin: 12px 0; font-weight: 750; font-size: 22px; font-variant-numeric: tabular-nums; }
     @media (max-height: 500px) and (min-width: 600px) {
       .arena { height: 272px; }
@@ -60,7 +60,10 @@
     }
     h1 { font-size: clamp(28px, 6vw, 48px); line-height: 1.15; margin: 24px 0 16px; }
     p { margin: 16px 0; overflow-wrap: break-word; }
-    button { width: 100%; min-height: 48px; border: 0; border-radius: 12px; padding: 16px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; }
+    button { width: 100%; min-height: 58px; border: 0; border-radius: 12px; padding: 10px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+    button svg { display: block; width: 220px; max-width: 100%; height: 36px; margin: auto; pointer-events: none; user-select: none; -webkit-user-select: none; }
+    .restart-icon, button[data-action="restart"] .jump-icon { display: none; }
+    button[data-action="restart"] .restart-icon { display: inline; }
     .arena + button { margin-top: 12px; }
     @media (hover: hover) { button:hover { background: #70502b; } }
     button:active { background: #70502b; }
@@ -137,7 +140,18 @@
     </div>
     </div>
     </div>
-    <button id="button" type="button" aria-describedby="status">Jump, Samit!</button>
+    <button id="button" type="button" aria-label="Jump, Samit!" aria-describedby="status" data-action="jump">
+      <svg viewBox="0 0 240 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <g class="jump-icon">
+          <path d="M27 34 V10 M16 21 L27 10 L38 21 M13 41 H41" stroke="#ffd77a" />
+          <path d="M76 12 H94 V29 Q94 37 85 37 Q76 37 76 30 M108 12 V28 Q108 37 117 37 Q126 37 126 28 V12 M140 37 V12 L150 27 L160 12 V37 M175 37 V12 H186 Q195 12 195 21 Q195 29 186 29 H175" />
+        </g>
+        <g class="restart-icon">
+          <path d="M38 18 A15 15 0 1 0 39 31 M38 8 V20 H26" stroke="#ffd77a" />
+          <path d="M66 37 L75 12 L84 37 M70 28 H80 M111 17 Q107 12 102 12 Q91 12 91 25 Q91 37 103 37 H112 V26 H104 M123 37 L132 12 L141 37 M127 28 H137 M153 12 V37 M167 37 V12 L186 37 V12" />
+        </g>
+      </svg>
+    </button>
     <p id="status" role="status">Tap to start. Jump again after landing. Survive for 10 points a second. Space works too.</p>
   </main>
   <script>
@@ -171,12 +185,13 @@
         score.textContent = '0';
         potato.dataset.level = 0;
         running = true;
-        button.textContent = 'Jump, Samit!';
+        button.dataset.action = 'jump';
+        button.setAttribute('aria-label', 'Jump, Samit!');
         status.textContent = 'Keep jumping. His only job is avoiding a job.';
         requestAnimationFrame(frame);
       }
       if (jumpHeight > 0) return;
-      velocity = 620;
+      velocity = 390;
       potato.classList.remove('farting');
       void potato.offsetWidth;
       potato.classList.add('farting');
@@ -189,7 +204,7 @@
       const dt = lastTime === null ? 0 : Math.min((now - lastTime) / 1000, .05);
       lastTime = now;
       elapsed += dt;
-      velocity -= 1600 * dt;
+      velocity -= 650 * dt;
       jumpHeight = Math.max(0, jumpHeight + velocity * dt);
       if (jumpHeight === 0 && velocity < 0) velocity = 0;
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
@@ -202,20 +217,21 @@
         element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
         arena.appendChild(element);
         obstacles.push({ element, x: arena.clientWidth + 10 });
-        spawnIn = 1.5 + Math.random() * .6;
+        spawnIn = 2.2 + Math.random() * .8;
       }
-      const speed = Math.min(280, 180 + elapsed * 2);
+      const speed = Math.min(190, 140 + elapsed * .4);
       const scale = runner.clientWidth / 240;
-      const hitLeft = runner.offsetLeft + 84 * scale;
-      const hitRight = runner.offsetLeft + 156 * scale;
+      const hitLeft = runner.offsetLeft + 92 * scale;
+      const hitRight = runner.offsetLeft + 148 * scale;
       for (const obstacle of obstacles) {
         obstacle.x -= speed * dt;
         obstacle.element.style.transform = 'translateX(' + obstacle.x + 'px)';
         // Use the torso and feet, leaving the waving arms out of collisions.
-        if (obstacle.x < hitRight && obstacle.x + 64 > hitLeft && jumpHeight < 34) {
+        if (obstacle.x + 4 < hitRight && obstacle.x + 60 > hitLeft && jumpHeight < 28) {
           running = false;
           status.textContent = 'Caught by ' + obstacle.element.textContent.toLowerCase() + '! ' + score.textContent + ' points. He finally has something to do.';
-          button.textContent = 'Help him escape again';
+          button.dataset.action = 'restart';
+          button.setAttribute('aria-label', 'Help him escape again');
           return;
         }
       }
@@ -235,6 +251,7 @@
     }
 
     button.addEventListener('click', jump);
+    button.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', event => {
       if (event.code === 'Space' && event.target !== button) {
         event.preventDefault();
