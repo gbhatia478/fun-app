@@ -69,6 +69,23 @@
     button:active { background: #70502b; }
     button:focus-visible { outline: 4px solid #b97417; outline-offset: 4px; }
     #status { min-height: 3em; margin: 24px 0 0; }
+    .leaderboard { margin-top: 24px; border-top: 2px solid #e5c743; padding-top: 16px; }
+    .leaderboard h2 { margin: 0 0 12px; font-size: 24px; }
+    #high-scores { padding-left: 28px; margin: 0; text-align: left; }
+    #high-scores li { padding: 8px 0 8px 8px; font-weight: 700; }
+    #high-scores li span { float: right; font-variant-numeric: tabular-nums; }
+    #leaderboard-status { margin: 12px 0 0; font-size: 15px; }
+    dialog { width: calc(100% - 40px); max-width: 380px; max-height: calc(100dvh - 40px); overflow: auto; border: 2px solid #b97417; border-radius: 20px; padding: 24px; background: #fff3ca; color: #493018; }
+    dialog::backdrop { background: #211e2499; }
+    dialog h2 { margin: 0; font-size: 28px; line-height: 1.2; }
+    dialog label { display: block; margin-bottom: 8px; font-weight: 700; }
+    dialog input { width: 100%; min-height: 48px; border: 2px solid #b97417; border-radius: 10px; padding: 8px 12px; background: #fff8e2; color: #493018; font: 24px system-ui, sans-serif; text-align: center; text-transform: uppercase; letter-spacing: .2em; }
+    dialog input:focus-visible { outline: 3px solid #493018; outline-offset: 2px; }
+    dialog button { margin-top: 12px; }
+    .secondary-button { background: #fff8e2; border: 2px solid #493018; color: #493018; }
+    .secondary-button:hover, .secondary-button:active { background: #fff3ca; }
+    button:disabled { opacity: .6; cursor: wait; }
+    #save-status { margin: 12px 0 0; font-size: 15px; }
   </style>
 </head>
 <body>
@@ -153,6 +170,22 @@
       </svg>
     </button>
     <p id="status" role="status">Tap to start. Jump again after landing. Survive for 10 points a second. Space works too.</p>
+    <section class="leaderboard" aria-labelledby="leaderboard-title">
+      <h2 id="leaderboard-title">Top 3 responsibility dodgers</h2>
+      <ol id="high-scores"></ol>
+      <p id="leaderboard-status" role="status">Loading high scores…</p>
+    </section>
+    <dialog id="initials-dialog" aria-labelledby="initials-title" aria-describedby="initials-description">
+      <form id="initials-form">
+        <h2 id="initials-title">You made the top 3!</h2>
+        <p id="initials-description">Claim your spot with 1–3 initials. They’ll appear on the shared leaderboard.</p>
+        <label for="initials">Your initials</label>
+        <input id="initials" name="initials" maxlength="3" pattern="[A-Za-z]{1,3}" required autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+        <button id="save-score" type="submit">Save my score</button>
+        <button id="skip-score" class="secondary-button" type="button">Skip for now</button>
+        <p id="save-status" role="status"></p>
+      </form>
+    </dialog>
   </main>
   <script>
     const roles = ['Assistant to Nobody', 'Senior Credit Taker', 'Director of Looking Busy', 'Chief Ego Officer', 'Supreme Leader of Doing Nothing'];
@@ -172,9 +205,100 @@
     let spawnIn = 0;
     let lastTime = null;
     let fartTimeout;
+    const scoresAPI = 'https://samit-high-scores.gbhatia.chatgpt.site';
+    const highScores = document.getElementById('high-scores');
+    const leaderboardStatus = document.getElementById('leaderboard-status');
+    const initialsDialog = document.getElementById('initials-dialog');
+    const initialsForm = document.getElementById('initials-form');
+    const initialsInput = document.getElementById('initials');
+    const saveButton = document.getElementById('save-score');
+    const skipButton = document.getElementById('skip-score');
+    const saveStatus = document.getElementById('save-status');
+    let runPromise;
+    let qualifyingRun;
+
+    async function scoresRequest(path, body) {
+      const response = await fetch(scoresAPI + path, {
+        method: body === undefined ? 'GET' : 'POST',
+        ...(body === undefined ? {} : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
+        signal: AbortSignal.timeout(10000),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Scores are unavailable right now.');
+      return data;
+    }
+
+    function showHighScores(scores) {
+      highScores.replaceChildren();
+      scores.forEach(entry => {
+        const row = document.createElement('li');
+        row.textContent = entry.initials;
+        const points = document.createElement('span');
+        points.textContent = entry.score + ' pts';
+        row.appendChild(points);
+        highScores.appendChild(row);
+      });
+      leaderboardStatus.textContent = scores.length ? 'Shared across everyone playing.' : 'No scores yet. Be the first to dodge a real job.';
+    }
+
+    async function loadHighScores() {
+      try {
+        showHighScores((await scoresRequest('/scores')).scores);
+      } catch {
+        leaderboardStatus.textContent = 'High scores are unavailable right now. You can still play.';
+      }
+    }
+
+    async function finishRun() {
+      button.disabled = true;
+      leaderboardStatus.textContent = 'Checking your score…';
+      try {
+        const run = await runPromise;
+        if (!run) throw new Error('Run could not be registered');
+        const result = await scoresRequest('/finish', { runId: run.runId, score: Number(score.textContent) });
+        showHighScores(result.scores);
+        if (result.qualified) {
+          qualifyingRun = run.runId;
+          initialsForm.reset();
+          saveStatus.textContent = '';
+          document.getElementById('initials-title').textContent = score.textContent + ' points. Top 3!';
+          initialsDialog.showModal();
+          initialsInput.focus();
+        }
+      } catch {
+        leaderboardStatus.textContent = 'Couldn’t check this run. Play again to try for the leaderboard.';
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    initialsForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      saveButton.disabled = true;
+      skipButton.disabled = true;
+      saveStatus.textContent = 'Saving your score…';
+      try {
+        const result = await scoresRequest('/scores', { runId: qualifyingRun, initials: initialsInput.value.trim().toUpperCase() });
+        showHighScores(result.scores);
+        initialsDialog.close();
+        leaderboardStatus.textContent = result.recorded ? 'Score saved. Samit takes all the credit.' : 'Someone just beat that score. Jump back in!';
+      } catch (error) {
+        saveStatus.textContent = error.message + ' Your initials are still here; try saving again.';
+      } finally {
+        saveButton.disabled = false;
+        skipButton.disabled = false;
+      }
+    });
+    skipButton.addEventListener('click', () => initialsDialog.close());
+    initialsDialog.addEventListener('cancel', event => {
+      if (saveButton.disabled) event.preventDefault();
+    });
+    loadHighScores();
 
     function jump() {
+      if (button.disabled || initialsDialog.open) return;
       if (!running) {
+        runPromise = scoresRequest('/runs', {}).catch(() => null);
         obstacles.forEach(obstacle => obstacle.element.remove());
         obstacles = [];
         elapsed = 0;
@@ -232,6 +356,7 @@
           status.textContent = 'Caught by ' + obstacle.element.textContent.toLowerCase() + '! ' + score.textContent + ' points. He finally has something to do.';
           button.dataset.action = 'restart';
           button.setAttribute('aria-label', 'Help him escape again');
+          finishRun();
           return;
         }
       }
@@ -253,6 +378,7 @@
     button.addEventListener('click', jump);
     button.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', event => {
+      if (initialsDialog.open) return;
       if (event.code === 'Space' && event.target !== button) {
         event.preventDefault();
         if (!event.repeat) jump();
