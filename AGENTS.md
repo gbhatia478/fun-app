@@ -13,7 +13,7 @@
 - Samit automatically rides a skateboard while illustrated objects from his friends' inside jokes approach. Players time jumps to avoid them, survive, and compete on the shared leaderboard.
 - Make the game easy to learn and difficult to master. The humor and costume unlocks support the game; the core challenge is precise jump timing as obstacles become harder.
 - Scores currently increase by one point per second of active play. Keep displayed scores and existing leaderboard entries on a consistent scale when changing scoring.
-- Points 1–10 are a forgiving learning phase. Difficulty increases smoothly after 10, reaches about 75% of the ramp at 30, and reaches full difficulty at 50. These are the current design targets; follow later user adjustments.
+- The opening through 5 points is a forgiving learning phase. Difficulty starts increasing at 5, reaches about 75% of the ramp at 30, and reaches full difficulty at 50. These are the current design targets; follow later user adjustments.
 - Around 30 points, play should feel demanding and require near-perfect timing. At 50 and beyond, the intent is to require almost perfect play. High scores should reflect skill and consistency.
 - Increase challenge through obstacle speed, spacing, and height. Taller obstacles should require clearing them near the top of a jump. Keep visible obstacles and collision rules consistent.
 - Keep the challenge fair: preserve enough time to land and jump again, avoid impossible obstacle sequences, and check precise play at both 30 and 60 fps on representative iPhone sizes. Simulated survival proves playability, but human playtesting determines whether the difficulty feels right.
@@ -31,9 +31,9 @@
 | `cat` | Orange cat, referencing his pet; artwork is a stylized stand-in, not a supplied likeness | Start | 100 px |
 | `plaid-shirt` | Red plaid button-up shirt, referencing his wardrobe | Start | 96 px |
 | `giant-donut` | Oversized pink-frosted donut with sprinkles, referencing the giant donut he ordered and ate | Start | 90 px |
-| `mark-sanchez` | Cartoon football player representing Mark Sanchez in a Jets #6 uniform, helmet, and carrying a football | 30 points | 108 px |
+| `mark-sanchez` | Cartoon football player representing Mark Sanchez in a Jets #6 uniform, helmet, and carrying a football | 15 points | 108 px |
 
-- Standard objects start at 32 px tall and grow with difficulty while retaining their artwork proportions. Mark Sanchez joins the random obstacle pool at 30 and is the tallest obstacle at full difficulty, making him tougher than the jersey.
+- Standard objects start at 32 px tall and grow with difficulty while retaining their artwork proportions. Mark Sanchez joins the random obstacle pool at 15 and is the tallest obstacle at full difficulty, making him tougher than the jersey.
 - Collision widths follow each drawing's displayed width, with a small edge allowance. Check all object types when adjusting sizes; never leave a collision box based on an old fixed block width.
 
 ## Work as the user's vibe coding partner

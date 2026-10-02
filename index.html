@@ -190,7 +190,7 @@
         </g>
       </svg>
     </button>
-    <p id="status" role="status">Tap to skate. Jump again after landing. Earn 1 point a second. Mark Sanchez joins at 30. Space works too.</p>
+    <p id="status" role="status">Tap to skate. Jump again after landing. Earn 1 point a second. Mark Sanchez joins at 15. Space works too.</p>
     <dialog id="initials-dialog" aria-labelledby="initials-title" aria-describedby="initials-description">
       <form id="initials-form">
         <h2 id="initials-title">You made the top 3!</h2>
@@ -218,7 +218,7 @@
       { id: 'cat', name: 'his cat', maxHeight: 100, aspect: 72 / 96, minScore: 0 },
       { id: 'plaid-shirt', name: 'a red plaid shirt', maxHeight: 96, aspect: 1, minScore: 0 },
       { id: 'giant-donut', name: 'the giant donut', maxHeight: 90, aspect: 1, minScore: 0 },
-      { id: 'mark-sanchez', name: 'Mark Sanchez', maxHeight: 108, aspect: 64 / 108, minScore: 30 },
+      { id: 'mark-sanchez', name: 'Mark Sanchez', maxHeight: 108, aspect: 64 / 108, minScore: 15 },
     ];
     let running = false;
     let obstacles = [];
@@ -335,7 +335,7 @@
         running = true;
         button.dataset.action = 'jump';
         button.setAttribute('aria-label', 'Jump, Samit!');
-        status.textContent = 'Keep skating. Jump over his greatest hits. Sanchez joins at 30.';
+        status.textContent = 'Keep skating. Jump over his greatest hits. Sanchez joins at 15.';
         requestAnimationFrame(frame);
       }
       if (jumpHeight > 0) return;
@@ -358,7 +358,7 @@
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
 
       const points = Math.floor(elapsed);
-      const difficulty = Math.max(0, Math.min(.75, (elapsed - 10) * .75 / 20)) + Math.max(0, Math.min(.25, (elapsed - 30) * .25 / 20));
+      const difficulty = Math.max(0, Math.min(.75, (elapsed - 5) * .75 / 25)) + Math.max(0, Math.min(.25, (elapsed - 30) * .25 / 20));
       const speed = 140 + 320 * difficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
