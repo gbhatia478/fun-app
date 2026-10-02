@@ -77,11 +77,11 @@
     button:active { background: #70502b; }
     button:focus-visible { outline: 4px solid #b97417; outline-offset: 4px; }
     #status { min-height: 3em; margin: 24px 0 0; }
-    .leaderboard { margin-top: 24px; border-top: 2px solid #e5c743; padding-top: 16px; }
-    .leaderboard h2 { margin: 0 0 12px; font-size: 24px; }
-    #high-scores { padding-left: 28px; margin: 0; text-align: left; }
-    #high-scores li { padding: 8px 0 8px 8px; font-weight: 700; }
-    #high-scores li span { float: right; font-variant-numeric: tabular-nums; }
+    .leaderboard { margin: 16px 0; border-bottom: 2px solid #e5c743; padding-bottom: 12px; }
+    .leaderboard h2 { margin: 0 0 8px; font-size: 20px; }
+    #high-scores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0; margin: 0; list-style-position: inside; }
+    #high-scores li { padding: 8px 4px; border-radius: 10px; background: #fff8e2; font-weight: 700; }
+    #high-scores li span { display: block; font-variant-numeric: tabular-nums; }
     #leaderboard-status { margin: 12px 0 0; font-size: 15px; }
     dialog { width: calc(100% - 40px); max-width: 380px; max-height: calc(100dvh - 40px); overflow: auto; border: 2px solid #b97417; border-radius: 20px; padding: 24px; background: #fff3ca; color: #493018; }
     dialog::backdrop { background: #211e2499; }
@@ -99,6 +99,11 @@
 <body>
   <main>
     <h1>Samit dodges responsibility.</h1>
+    <section class="leaderboard" aria-labelledby="leaderboard-title">
+      <h2 id="leaderboard-title">Top 3 responsibility dodgers</h2>
+      <ol id="high-scores"></ol>
+      <p id="leaderboard-status" role="status">Loading high scores…</p>
+    </section>
     <p>Meetings. Deadlines. Chores. Help him jump over everything he should be doing.</p>
     <p class="scoreboard">Score: <span id="score">0</span></p>
     <div class="arena" role="img" aria-label="Samit jumps over approaching responsibilities. Use the jump button or Space to play.">
@@ -178,11 +183,6 @@
       </svg>
     </button>
     <p id="status" role="status">Tap to start. Jump again after landing. Survive for 10 points a second. Space works too.</p>
-    <section class="leaderboard" aria-labelledby="leaderboard-title">
-      <h2 id="leaderboard-title">Top 3 responsibility dodgers</h2>
-      <ol id="high-scores"></ol>
-      <p id="leaderboard-status" role="status">Loading high scores…</p>
-    </section>
     <dialog id="initials-dialog" aria-labelledby="initials-title" aria-describedby="initials-description">
       <form id="initials-form">
         <h2 id="initials-title">You made the top 3!</h2>
@@ -341,6 +341,9 @@
       if (jumpHeight === 0 && velocity < 0) velocity = 0;
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
 
+      const points = Math.floor(elapsed * 10);
+      const difficulty = Math.min(1, points / 1000);
+      const speed = 140 + 160 * difficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
         const element = document.createElement('div');
@@ -349,9 +352,9 @@
         element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
         arena.appendChild(element);
         obstacles.push({ element, x: arena.clientWidth + 10 });
-        spawnIn = 2.2 + Math.random() * .8;
+        // Keep enough time between obstacles to land before the next jump.
+        spawnIn = 2.2 - .9 * difficulty + Math.random() * (.8 - .4 * difficulty);
       }
-      const speed = Math.min(190, 140 + elapsed * .4);
       const scale = runner.clientWidth / 240;
       const hitLeft = runner.offsetLeft + 92 * scale;
       const hitRight = runner.offsetLeft + 148 * scale;
@@ -373,7 +376,6 @@
         obstacle.element.remove();
         return false;
       });
-      const points = Math.floor(elapsed * 10);
       score.textContent = points;
       const level = Math.min(5, Math.floor(points / 50));
       if (+potato.dataset.level !== level) {
