@@ -24,7 +24,12 @@
     .potato svg { display: block; width: 100%; height: 100%; overflow: visible; }
     .character-head { position: absolute; top: -18px; left: 67px; width: 106px; height: 120px; object-fit: contain; transform-origin: 50% 85%; animation: head-bob 1.2s steps(2, end) infinite; }
     .character-head img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .face-top { clip-path: inset(0 0 22% 0); }
+    .character-head .face-jaw { position: absolute; inset: 0; clip-path: inset(78% 0 0 0); animation: talk .65s steps(1, end) infinite; }
+    .mouth-gap { position: absolute; top: 76%; left: 24%; width: 55%; height: 17%; border-radius: 50%; background: #211e24; }
     .character-head .head-accessories { position: absolute; inset: 0; }
+    .potato .fart-cloud { position: absolute; inset: 0; opacity: 0; pointer-events: none; transform-origin: 155px 210px; }
+    .potato.farting .fart-cloud { animation: fart-puff .9s ease-out both; }
     .accessory { display: none; }
     .potato[data-level="1"] .tie, .potato[data-level="2"] .tie, .potato[data-level="3"] .tie, .potato[data-level="4"] .tie, .potato[data-level="5"] .tie,
     .potato[data-level="2"] .sunglasses, .potato[data-level="3"] .sunglasses, .potato[data-level="4"] .sunglasses, .potato[data-level="5"] .sunglasses,
@@ -37,7 +42,12 @@
     @keyframes head-bob { 0%, 100% { transform: translateY(0) rotate(-7deg); } 50% { transform: translateY(4px) rotate(7deg); } }
     @keyframes body-rock { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
     @keyframes arm-swing { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(18deg); } }
-    @media (prefers-reduced-motion: reduce) { .character-head, .cutout-body, .left-arm, .right-arm { animation: none; } }
+    @keyframes talk { 0%, 32%, 68%, 100% { transform: translateY(0); } 16%, 48% { transform: translateY(8px) rotate(-2deg); } 82% { transform: translateY(4px) rotate(1deg); } }
+    @keyframes fart-puff { 0% { opacity: 0; transform: scale(.3); } 15% { opacity: 1; } 65% { opacity: .85; } 100% { opacity: 0; transform: translate(15px, -20px) scale(1.15); } }
+    @media (prefers-reduced-motion: reduce) {
+      .character-head, .character-head .face-jaw, .cutout-body, .left-arm, .right-arm, .potato.farting .fart-cloud { animation: none; }
+      .potato.farting .fart-cloud { opacity: 1; }
+    }
     h1 { font-size: clamp(28px, 6vw, 48px); line-height: 1.15; margin: 24px 0 16px; }
     p { margin: 16px 0; overflow-wrap: break-word; }
     button { width: 100%; min-height: 48px; border: 0; border-radius: 12px; padding: 16px 20px; background: #493018; color: white; font: inherit; cursor: pointer; touch-action: manipulation; }
@@ -50,6 +60,14 @@
 <body>
   <main>
     <div class="potato" data-level="0" aria-hidden="true">
+      <svg class="fart-cloud" viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#c5d979" stroke="#788c38" stroke-width="2">
+          <circle cx="163" cy="212" r="9" />
+          <circle cx="181" cy="204" r="15" />
+          <path d="M190 203 C174 191 181 174 195 177 C198 161 219 164 222 178 C241 174 248 194 235 203 C244 218 225 232 215 221 C199 233 183 218 190 203 Z" />
+        </g>
+        <text x="210" y="205" text-anchor="middle" fill="#493018" font-family="system-ui, sans-serif" font-size="12" font-weight="800">PFFT!</text>
+      </svg>
       <svg viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="120" cy="281" rx="69" ry="6" fill="#493018" opacity=".12" />
         <g class="cutout-body" stroke="#3a3434" stroke-width="1.5" stroke-linejoin="round">
@@ -79,7 +97,9 @@
         </g>
       </svg>
       <div class="character-head">
-        <img src="assets/samit-head.png" alt="" width="106" height="120">
+        <div class="mouth-gap"></div>
+        <img class="face-top" src="assets/samit-head.png" alt="" width="106" height="120">
+        <img class="face-jaw" src="assets/samit-head.png" alt="" width="106" height="120">
         <svg class="head-accessories" viewBox="0 0 106 120" xmlns="http://www.w3.org/2000/svg">
           <g class="accessory sunglasses" stroke="#211e24" stroke-width="3" stroke-linejoin="round">
             <path d="M23 59 H49 L46 74 Q33 80 26 71 Z M59 59 H85 L82 71 Q72 80 62 74 Z" fill="#211e24" />
@@ -108,9 +128,16 @@
     const roles = ['Assistant Potato', 'Senior Potato', 'Director of Doing Nothing', 'Chief Couch Potato', 'Supreme Potato of the Universe'];
     const outfits = ['A tie. Very professional.', 'Sunglasses. Too cool to work.', 'An enormous hat. Bigger than the job.', 'A crown on the hat. Naturally.', 'A royal cape. The outfit is complete.'];
     let promotions = 0;
+    const potato = document.querySelector('.potato');
+    let fartTimeout;
     document.getElementById('button').addEventListener('click', () => {
       const level = promotions % roles.length;
-      document.querySelector('.potato').dataset.level = level + 1;
+      potato.dataset.level = level + 1;
+      potato.classList.remove('farting');
+      void potato.offsetWidth;
+      potato.classList.add('farting');
+      clearTimeout(fartTimeout);
+      fartTimeout = setTimeout(() => potato.classList.remove('farting'), 900);
       document.getElementById('status').textContent = 'Current role: ' + roles[level] + '. ' + outfits[level];
       promotions += 1;
     });
