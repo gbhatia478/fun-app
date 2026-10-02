@@ -343,8 +343,8 @@
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
 
       const points = Math.floor(elapsed);
-      const difficulty = Math.min(1, elapsed / 100);
-      const expertDifficulty = Math.min(1, Math.max(0, (elapsed - 120) / 380));
+      const difficulty = Math.min(1, Math.max(0, (elapsed - 15) / 85));
+      const expertDifficulty = Math.min(1, Math.max(0, (elapsed - 15) / 485));
       const speed = 140 + 160 * difficulty + 120 * expertDifficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
