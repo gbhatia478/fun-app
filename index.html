@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Very Important Potato</title>
+  <title>Samit Fails Upward</title>
   <style>
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
@@ -119,14 +119,15 @@
         </svg>
       </div>
     </div>
-    <h1>Very Important Potato</h1>
-    <p>This potato has absolutely no responsibilities.</p>
-    <button id="button" type="button">Give potato a promotion</button>
-    <p id="status" role="status">Current role: Potato Intern</p>
+    <h1>Samit fails upward.</h1>
+    <p>Zero work. Unlimited confidence. Help our least qualified friend climb the ladder.</p>
+    <button id="button" type="button">Promote Samit anyway</button>
+    <p id="status" role="status">Current title: Group Chat Intern</p>
   </main>
   <script>
-    const roles = ['Assistant Potato', 'Senior Potato', 'Director of Doing Nothing', 'Chief Couch Potato', 'Supreme Potato of the Universe'];
-    const outfits = ['A tie. Very professional.', 'Sunglasses. Too cool to work.', 'An enormous hat. Bigger than the job.', 'A crown on the hat. Naturally.', 'A royal cape. The outfit is complete.'];
+    const roles = ['Assistant to Nobody', 'Senior Credit Taker', 'Director of Looking Busy', 'Chief Ego Officer', 'Supreme Leader of Doing Nothing'];
+    const outfits = ['A tie. That’s his entire résumé.', 'Now he can ignore you in style.', 'Finally, a hat that fits his ego.', 'He’ll be unbearable in the group chat.', 'All that power. Still just hot air.'];
+    const buttonLabels = ['Inflate his ego', 'Give him a bigger head', 'Crown this nonsense', 'Give him unlimited power', 'Enable him again'];
     let promotions = 0;
     const potato = document.querySelector('.potato');
     let fartTimeout;
@@ -138,7 +139,8 @@
       potato.classList.add('farting');
       clearTimeout(fartTimeout);
       fartTimeout = setTimeout(() => potato.classList.remove('farting'), 900);
-      document.getElementById('status').textContent = 'Current role: ' + roles[level] + '. ' + outfits[level];
+      document.getElementById('status').textContent = 'Current title: ' + roles[level] + '. ' + outfits[level];
+      document.getElementById('button').textContent = buttonLabels[level];
       promotions += 1;
     });
   </script>
