@@ -343,19 +343,20 @@
       runner.style.transform = 'translateY(' + -jumpHeight + 'px)';
 
       const points = Math.floor(elapsed);
-      const difficulty = Math.min(1, Math.max(0, (elapsed - 15) / 85));
-      const expertDifficulty = Math.min(1, Math.max(0, (elapsed - 15) / 485));
-      const speed = 140 + 160 * difficulty + 120 * expertDifficulty;
+      const difficulty = Math.max(0, Math.min(.75, (elapsed - 10) * .75 / 20)) + Math.max(0, Math.min(.25, (elapsed - 30) * .25 / 20));
+      const speed = 140 + 320 * difficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
         const element = document.createElement('div');
         element.className = 'obstacle';
+        const height = 32 + 76 * difficulty;
+        element.style.height = height + 'px';
         element.setAttribute('aria-hidden', 'true');
         element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
         arena.appendChild(element);
-        obstacles.push({ element, x: arena.clientWidth + 10 });
+        obstacles.push({ element, x: arena.clientWidth + 10, height });
         // Tighten the recovery gap gradually, keeping time to land between jumps.
-        spawnIn = 2.2 - .9 * difficulty - .08 * expertDifficulty + Math.random() * (.8 - .4 * difficulty - .34 * expertDifficulty);
+        spawnIn = 2.2 - .99 * difficulty + Math.random() * (.8 - .72 * difficulty);
       }
       const scale = runner.clientWidth / 240;
       const hitLeft = runner.offsetLeft + 92 * scale;
@@ -364,7 +365,7 @@
         obstacle.x -= speed * dt;
         obstacle.element.style.transform = 'translateX(' + obstacle.x + 'px)';
         // Use the torso and feet, leaving the waving arms out of collisions.
-        if (obstacle.x + 4 < hitRight && obstacle.x + 60 > hitLeft && jumpHeight < 28) {
+        if (obstacle.x + 4 < hitRight && obstacle.x + 60 > hitLeft && jumpHeight < obstacle.height - 4) {
           running = false;
           status.textContent = 'Caught by ' + obstacle.element.textContent.toLowerCase() + '! ' + score.textContent + ' points. He finally has something to do.';
           button.dataset.action = 'restart';
