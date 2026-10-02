@@ -31,8 +31,10 @@
     .arena { position: relative; height: 320px; overflow: hidden; border: 2px solid #b97417; border-radius: 20px; background: #fff8e2; }
     .arena::after { content: ''; position: absolute; left: 0; right: 0; bottom: 20px; border-top: 3px solid #b97417; }
     .runner { position: absolute; left: 18px; bottom: 24px; width: 108px; height: 131px; }
-    .potato { position: absolute; bottom: -4px; width: 240px; height: 290px; transform: scale(.45); transform-origin: bottom left; }
-    .obstacle { position: absolute; left: 0; bottom: 24px; width: 64px; height: 32px; display: grid; place-items: center; border: 2px solid #7f2824; border-top-width: 8px; border-radius: 5px; background: #ffd7a3; color: #493018; font-size: 10px; font-weight: 800; }
+    .potato { position: absolute; bottom: 7px; width: 240px; height: 290px; transform: scale(.45); transform-origin: bottom left; }
+    .skateboard { position: absolute; left: 10px; bottom: -1px; width: calc(100% - 20px); height: 15px; }
+    .obstacle { position: absolute; left: 0; bottom: 24px; }
+    .obstacle img { display: block; width: 100%; height: 100%; }
     .scoreboard { margin: 12px 0; font-weight: 750; font-size: 22px; font-variant-numeric: tabular-nums; }
     @media (max-height: 500px) and (min-width: 600px) {
       .arena { height: 272px; }
@@ -104,9 +106,9 @@
       <ol id="high-scores"></ol>
       <p id="leaderboard-status" role="status">Loading high scores…</p>
     </section>
-    <p>Meetings. Deadlines. Chores. Help him jump over everything he should be doing.</p>
+    <p>A dented trash can. Jets regrets. One giant donut. Skate through Samit’s greatest hits.</p>
     <p class="scoreboard">Score: <span id="score">0</span></p>
-    <div class="arena" role="img" aria-label="Samit jumps over approaching responsibilities. Use the jump button or Space to play.">
+    <div class="arena" role="img" aria-label="Samit rides a skateboard and jumps over a dented trash can, Jets jersey, cat, plaid shirt, giant donut, and later Mark Sanchez. Use the jump button or Space to play.">
     <div class="runner" aria-hidden="true">
     <div class="potato" data-level="0" aria-hidden="true">
       <svg class="fart-cloud" viewBox="0 0 240 290" xmlns="http://www.w3.org/2000/svg">
@@ -168,6 +170,12 @@
         </svg>
       </div>
     </div>
+    <svg class="skateboard" viewBox="0 0 100 18" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M2 3 Q9 9 19 7 H81 Q91 9 98 3 L95 9 Q89 12 80 11 H20 Q11 12 5 9 Z" fill="#c84f51" stroke="#493018" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M23 11 V14 M77 11 V14" stroke="#839b9c" stroke-width="3"/>
+      <circle cx="23" cy="14" r="3" fill="#ffd77a" stroke="#493018" stroke-width="2"/>
+      <circle cx="77" cy="14" r="3" fill="#ffd77a" stroke="#493018" stroke-width="2"/>
+    </svg>
     </div>
     </div>
     <button id="button" type="button" aria-label="Jump, Samit!" aria-describedby="status" data-action="jump">
@@ -182,7 +190,7 @@
         </g>
       </svg>
     </button>
-    <p id="status" role="status">Tap to start. Jump again after landing. Survive for 10 points a second. Space works too.</p>
+    <p id="status" role="status">Tap to skate. Jump again after landing. Earn 1 point a second. Mark Sanchez joins at 30. Space works too.</p>
     <dialog id="initials-dialog" aria-labelledby="initials-title" aria-describedby="initials-description">
       <form id="initials-form">
         <h2 id="initials-title">You made the top 3!</h2>
@@ -204,7 +212,14 @@
     const button = document.getElementById('button');
     const status = document.getElementById('status');
     const score = document.getElementById('score');
-    const responsibilities = ['MEETING', 'DEADLINE', 'CHORES'];
+    const obstacleTypes = [
+      { id: 'trash-can', name: 'the dented trash can', maxHeight: 104, aspect: 64 / 100, minScore: 0 },
+      { id: 'sanchez-jersey', name: 'a Mark Sanchez jersey', maxHeight: 104, aspect: 80 / 98, minScore: 0 },
+      { id: 'cat', name: 'his cat', maxHeight: 100, aspect: 72 / 96, minScore: 0 },
+      { id: 'plaid-shirt', name: 'a red plaid shirt', maxHeight: 96, aspect: 1, minScore: 0 },
+      { id: 'giant-donut', name: 'the giant donut', maxHeight: 90, aspect: 1, minScore: 0 },
+      { id: 'mark-sanchez', name: 'Mark Sanchez', maxHeight: 108, aspect: 64 / 108, minScore: 30 },
+    ];
     let running = false;
     let obstacles = [];
     let elapsed = 0;
@@ -320,7 +335,7 @@
         running = true;
         button.dataset.action = 'jump';
         button.setAttribute('aria-label', 'Jump, Samit!');
-        status.textContent = 'Keep jumping. His only job is avoiding a job.';
+        status.textContent = 'Keep skating. Jump over his greatest hits. Sanchez joins at 30.';
         requestAnimationFrame(frame);
       }
       if (jumpHeight > 0) return;
@@ -347,14 +362,22 @@
       const speed = 140 + 320 * difficulty;
       spawnIn -= dt;
       if (spawnIn <= 0) {
+        const availableTypes = obstacleTypes.filter(type => points >= type.minScore);
+        const type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
         const element = document.createElement('div');
         element.className = 'obstacle';
-        const height = 32 + 76 * difficulty;
+        element.dataset.obstacle = type.id;
+        const height = 32 + (type.maxHeight - 32) * difficulty;
+        const width = height * type.aspect;
         element.style.height = height + 'px';
+        element.style.width = width + 'px';
         element.setAttribute('aria-hidden', 'true');
-        element.textContent = responsibilities[Math.floor(Math.random() * responsibilities.length)];
+        const artwork = document.createElement('img');
+        artwork.src = 'assets/obstacles/' + type.id + '.svg';
+        artwork.alt = '';
+        element.appendChild(artwork);
         arena.appendChild(element);
-        obstacles.push({ element, x: arena.clientWidth + 10, height });
+        obstacles.push({ element, x: arena.clientWidth + 10, height, width, name: type.name });
         // Tighten the recovery gap gradually, keeping time to land between jumps.
         spawnIn = 2.2 - .99 * difficulty + Math.random() * (.8 - .72 * difficulty);
       }
@@ -365,9 +388,9 @@
         obstacle.x -= speed * dt;
         obstacle.element.style.transform = 'translateX(' + obstacle.x + 'px)';
         // Use the torso and feet, leaving the waving arms out of collisions.
-        if (obstacle.x + 4 < hitRight && obstacle.x + 60 > hitLeft && jumpHeight < obstacle.height - 4) {
+        if (obstacle.x + 4 < hitRight && obstacle.x + obstacle.width - 4 > hitLeft && jumpHeight < obstacle.height - 4) {
           running = false;
-          status.textContent = 'Caught by ' + obstacle.element.textContent.toLowerCase() + '! ' + score.textContent + ' points. He finally has something to do.';
+          status.textContent = 'Caught by ' + obstacle.name + '! ' + score.textContent + ' points. His past caught up with him.';
           button.dataset.action = 'restart';
           button.setAttribute('aria-label', 'Help him escape again');
           finishRun();
@@ -375,7 +398,7 @@
         }
       }
       obstacles = obstacles.filter(obstacle => {
-        if (obstacle.x + 64 >= 0) return true;
+        if (obstacle.x + obstacle.width >= 0) return true;
         obstacle.element.remove();
         return false;
       });

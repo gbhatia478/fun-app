@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 98">
+  <g stroke="#153f31" stroke-width="3" stroke-linejoin="round">
+    <path d="M25 3 L13 9 L2 29 L17 39 L22 31 L20 94 Q40 98 60 94 L58 31 L63 39 L78 29 L67 9 L55 3 Z" fill="#16764d"/>
+    <path d="M27 3 Q40 21 53 3 L48 2 Q40 11 32 2 Z" fill="#f6f2df"/>
+    <path d="M6 23 L20 32 M60 32 L74 23" stroke="#f6f2df" stroke-width="7"/>
+    <path d="M25 86 H55" stroke="#0b573d" stroke-width="2"/>
+  </g>
+  <text x="40" y="31" text-anchor="middle" fill="#fff9e8" font-family="Arial, sans-serif" font-size="9" font-weight="900">SANCHEZ</text>
+  <text x="40" y="74" text-anchor="middle" fill="#fff9e8" stroke="#153f31" stroke-width=".5" font-family="Arial, sans-serif" font-size="44" font-weight="900">6</text>
+  <text x="40" y="85" text-anchor="middle" fill="#fff9e8" font-family="Arial, sans-serif" font-size="8" font-weight="900">JETS</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <pattern id="plaid" width="18" height="18" patternUnits="userSpaceOnUse">
+      <rect width="18" height="18" fill="#c7443e"/>
+      <path d="M5 0 V18 M0 5 H18" stroke="#732d38" stroke-width="7"/>
+      <path d="M14 0 V18 M0 14 H18" stroke="#f4b184" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+  <path d="M32 3 L18 10 L2 37 L17 48 L27 33 L23 91 Q48 96 73 91 L69 33 L79 48 L94 37 L78 10 L64 3 Z" fill="url(#plaid)" stroke="#592e32" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 3 L48 16 L64 3 L60 24 L48 16 L36 24 Z" fill="#e56751" stroke="#592e32" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M48 19 V91" stroke="#592e32" stroke-width="3"/>
+  <path d="M56 33 H69 V48 L63 52 L56 48 Z" fill="#a93636" stroke="#592e32" stroke-width="2"/>
+  <g fill="#ffe4b1"><circle cx="48" cy="31" r="2"/><circle cx="48" cy="46" r="2"/><circle cx="48" cy="61" r="2"/><circle cx="48" cy="76" r="2"/></g>
+</svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 108">
+  <g stroke="#173f32" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M17 60 L29 61 L27 94 L13 94 Z M36 61 L48 60 L51 94 L37 94 Z" fill="#f7f1df"/>
+    <path d="M20 64 L19 88 M44 64 L45 88" stroke="#16764d" stroke-width="3"/>
+    <path d="M13 94 H27 V105 H7 V101 Z M37 94 H51 L57 101 V105 H37 Z" fill="#263b36"/>
+    <path d="M17 29 L6 34 L3 54 L13 57 L19 43 M47 29 L57 35 L60 53 L50 56 L45 43" fill="#16764d"/>
+    <path d="M18 28 Q32 22 46 28 L48 65 Q32 70 16 65 Z" fill="#16764d"/>
+    <path d="M17 63 H47 V69 H17 Z" fill="#f7f1df"/>
+    <path d="M8 39 L16 42 M49 42 L56 39" stroke="#f7f1df" stroke-width="4"/>
+    <path d="M23 9 Q32 3 41 10 V26 Q32 33 23 26 Z" fill="#c18a62"/>
+    <path d="M18 17 Q16 2 32 2 Q49 2 46 21 L40 20 V12 H24 V22 H18 Z" fill="#f7f1df"/>
+    <path d="M31 3 V10" stroke="#16764d" stroke-width="6"/>
+    <path d="M23 19 H46 V27 H25 M30 19 V27 M40 19 V27" fill="none" stroke="#839c97" stroke-width="2"/>
+  </g>
+  <text x="32" y="39" text-anchor="middle" fill="#fff9e8" font-family="Arial, sans-serif" font-size="6" font-weight="900">SANCHEZ</text>
+  <text x="32" y="60" text-anchor="middle" fill="#fff9e8" font-family="Arial, sans-serif" font-size="24" font-weight="900">6</text>
+  <ellipse cx="53" cy="62" rx="7" ry="11" transform="rotate(25 53 62)" fill="#a5683d" stroke="#5d3729" stroke-width="2"/>
+  <path d="M49 59 L56 64 M52 58 L49 62 M55 60 L52 64" stroke="#ffe4b1" stroke-width="1.5"/>
+</svg>
